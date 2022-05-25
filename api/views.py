@@ -1,4 +1,3 @@
-import re
 from dateutil import parser
 from rest_framework.response import Response
 from rest_framework import status
