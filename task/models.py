@@ -31,4 +31,4 @@ class Task(models.Model):
         return super().save(*args, **kwargs)
     
     class Meta:
-        ordering = ('-date_added',)
+        ordering = ('-date_added','-id')
