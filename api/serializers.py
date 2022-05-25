@@ -12,8 +12,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['division'] = account.division.name
         try:
             leader = account.division.leader.user
+            print(f"Leader : {leader}")
             if (user.username == leader.username):
                 token['leader_of'] = account.division.name
         except ObjectDoesNotExist:
+            print("No leader")
             pass
         return token
