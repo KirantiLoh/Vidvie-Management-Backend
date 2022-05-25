@@ -11,7 +11,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['name'] = f"{user.first_name} {user.last_name}"
         token['division'] = account.division.name
         try:
-            if (user.username == account.division.leader.user.username):
+            leader = account.division.leader.user
+            if (user.username == leader.username):
                 token['leader_of'] = account.division.name
         except ObjectDoesNotExist:
             pass
