@@ -12,7 +12,7 @@ class Division(models.Model):
     leader = models.OneToOneField('user.account', on_delete=models.CASCADE, related_name='leader_of', blank=True, null=True)
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
-    whatsapp_number = models.CharField(max_length=20, default='')
+    whatsapp_number = models.CharField(max_length=20, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
