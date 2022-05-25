@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 class Task(models.Model):
@@ -17,7 +18,7 @@ class Task(models.Model):
     description = models.CharField(max_length=1000)
     priority = models.CharField(max_length=10, choices=priority_choices)
     status = models.CharField(max_length=20, choices=status_choices)
-    date_added = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(default=timezone.now)
     date_updated = models.DateTimeField(auto_now=True)
     deadline = models.DateTimeField()
     requestor_division = models.ForeignKey('user.division', on_delete=models.CASCADE, related_name='requests')
