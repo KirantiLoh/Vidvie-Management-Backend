@@ -14,7 +14,6 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 import django_heroku
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1','vidvie-management-backend.herokuapp.com/', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1','vidvie-management-backend.herokuapp.com', 'localhost']
 
 
 # Application definition
@@ -153,7 +152,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    'https://vidvie-management.netlify.app'
+    'https://vidvie-management.netlify.app',
+    'https://management.vidvie.co.id',
 )
 
 REST_FRAMEWORK = {
