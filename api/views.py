@@ -15,8 +15,7 @@ from task.models import Task
 from task.serializers import TaskSerializer
 from task.filters import TaskFilter
 from item.models import Item
-
-from api import serializers
+from item.filters import ItemFilter
 
 # Create your views here.
 @api_view(['GET'])
@@ -251,7 +250,7 @@ def requests_by_division_view(request, slug):
     except ObjectDoesNotExist:
         return Response({"message": "You are not allowed to do any modification!"}, status=status.HTTP_403_FORBIDDEN)     
 
-@api_view(['GET', 'POST', 'DELETE', 'PATCH'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def items_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
@@ -260,7 +259,7 @@ def items_by_division_view(request, slug):
         if request.method == 'GET':
             paginator = PageNumberPagination()
             paginator.page_size = 10
-            items = division.items.all()
+            items = ItemFilter(request.GET, division.items.all()).qs
             result = paginator.paginate_queryset(items, request)
             serializer = ItemSerializer(result, many = True)
             return paginator.get_paginated_response(serializer.data)
@@ -276,31 +275,6 @@ def items_by_division_view(request, slug):
                 )
                 item.save()
                 return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
-            if request.method == 'PATCH':
-                data = request.data
-                if data['updating'] == 'Condition':
-                    for id in data['isChecked']:
-                        item = Item.objects.get(id=id)
-                        if item.division == division:
-                            item.condition = data['updatedValue']
-                            item.save()
-                        else:
-                            pass
-                if data['updating'] == 'Stock':
-                    for id in data['isChecked']:
-                        item = Item.objects.get(id=id)
-                        if item.division == division:
-                            item.stock = data['updatedValue']
-                            item.save()
-                        else:
-                            pass
-                return Response({"message": "Items successfully updated"}, status=status.HTTP_200_OK)
-            if request.method == 'DELETE':
-                data = request.data
-                for id in data['isChecked']:
-                    item = Item.objects.get(id=id)
-                    item.delete()
-                return Response({"message": "Items successfully deleted"}, status=status.HTTP_200_OK)
         else:
             return Response({"message": "You are not allowed to do any modification!"}, status=status.HTTP_403_FORBIDDEN)     
     except ObjectDoesNotExist:
