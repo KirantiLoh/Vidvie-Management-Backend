@@ -160,7 +160,7 @@ def tasks_by_division_view(request, slug):
             if data['updating'] == 'Status':
                 for id in data['isChecked']:
                     task = Task.objects.get(id=id)
-                    if task.requestor_division == division:
+                    if task.requestee_division == division:
                         task.status = data['updatedValue']
                         task.save()
                     else:
@@ -168,7 +168,7 @@ def tasks_by_division_view(request, slug):
             if data['updating'] == 'Deadline':
                 for id in data['isChecked']:
                     task = Task.objects.get(id=id)
-                    if task.requestor_division == division:
+                    if task.requestee_division == division:
                         task.deadline = parser.parse(data['updatedValue'])
                         task.save()
                     else:
@@ -176,7 +176,7 @@ def tasks_by_division_view(request, slug):
             if data['updating'] == 'Priority':
                 for id in data['isChecked']:
                     task = Task.objects.get(id=id)
-                    if task.requestor_division == division:
+                    if task.requestee_division == division:
                         task.priority = data['updatedValue']
                         task.save()
                     else:
