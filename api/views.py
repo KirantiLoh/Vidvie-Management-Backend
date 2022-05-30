@@ -287,7 +287,7 @@ def item_view(request, id):
     try:
         item = Item.objects.get(id=id)
         if request.method == 'GET':
-            serializer = ItemSerializer(item, many = False)
+            serializer = ItemSerializer(item.history.all(), many = True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         if (item.division.leader == account):
             if request.method == 'POST':

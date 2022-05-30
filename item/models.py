@@ -1,4 +1,5 @@
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 class Item(models.Model):
@@ -13,6 +14,7 @@ class Item(models.Model):
     division = models.ForeignKey('user.division', on_delete=models.CASCADE, related_name='items')
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
 
     class Meta:
         ordering = ('name',)
