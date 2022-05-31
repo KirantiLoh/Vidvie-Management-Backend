@@ -70,27 +70,30 @@ def task_view(request, id):
         except ObjectDoesNotExist:
             return Response({"message": "Task does not exist"}, status=status.HTTP_404_NOT_FOUND)
     try:
-        division = Division.objects.get(leader = account)
+        division = account.division
         if request.method == 'POST':
             data = request.data
             try:
                 task = Task.objects.get(id = id)
-                requestor = Division.objects.get(name=data['requestor_division'])
-                requestee = Division.objects.get(name=data['requestee_division'])
-                task.title = data['title']
-                task.description = data['description']
-                task.priority = data['priority']
-                task.status = data['status']
-                task.deadline = parser.parse(data['deadline'])
-                task.requestor_division = requestor
-                task.requestee_division = requestee
-                task.save()
-                return Response({'message': 'Task successfully updated'}, status=status.HTTP_200_OK)
+                if division == task.requestor_division or division == task.requestee_division:
+                    requestor = Division.objects.get(name=data['requestor_division'])
+                    requestee = Division.objects.get(name=data['requestee_division'])
+                    task.title = data['title']
+                    task.description = data['description']
+                    task.priority = data['priority']
+                    task.status = data['status']
+                    task.deadline = parser.parse(data['deadline'])
+                    task.requestor_division = requestor
+                    task.requestee_division = requestee
+                    task.save()
+                    return Response({'message': 'Task successfully updated'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"message": "You are not allowed to update this task!"}, status=status.HTTP_403_FORBIDDEN)
             except ObjectDoesNotExist:
                 return Response({'message': 'Task cannot be updated due to some error...', status: status.HTTP_400_BAD_REQUEST})
         if request.method == 'DELETE':
             task = Task.objects.get(id=id)
-            if task.requestor_division == division:
+            if division == task.requestor_division or division == task.requestee_division:
                 task.delete()
                 return Response({'message': 'Task successfully deleted'}, status=status.HTTP_200_OK)
             else:
@@ -137,7 +140,7 @@ def requests_view(request):
         serializer = TaskSerializer(result, many = True)
         return paginator.get_paginated_response(serializer.data)
 
-@api_view(['GET', 'PATCH'])
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def tasks_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
@@ -152,46 +155,7 @@ def tasks_by_division_view(request, slug):
             return paginator.get_paginated_response(serializer.data)
         except ObjectDoesNotExist:
             return Response({"message": "Division does not exist..."}, status = status.HTTP_404_NOT_FOUND)
-    try:
-        division = Division.objects.get(leader = account)
-        if request.method == 'PATCH':
-            data = request.data
-            if data['updating'] == 'Status':
-                for id in data['isChecked']:
-                    task = Task.objects.get(id=id)
-                    if task.requestee_division == division:
-                        task.status = data['updatedValue']
-                        task.save()
-                    else:
-                        pass
-            if data['updating'] == 'Deadline':
-                for id in data['isChecked']:
-                    task = Task.objects.get(id=id)
-                    if task.requestee_division == division:
-                        task.deadline = parser.parse(data['updatedValue'])
-                        task.save()
-                    else:
-                        pass
-            if data['updating'] == 'Priority':
-                for id in data['isChecked']:
-                    task = Task.objects.get(id=id)
-                    if task.requestee_division == division:
-                        task.priority = data['updatedValue']
-                        task.save()
-                    else:
-                        pass
-            return Response({"message": "Tasks Successfully updated"}, status = status.HTTP_200_OK)            
-        if request.method == 'DELETE':
-            data = request.data['data']
-            for id in data['isChecked']:
-                task = Task.objects.get(id=id)
-                if task.requestor_division == division:
-                    task.delete()
-                    return Response({"message": "Tasks Successfully deleted"}, status = status.HTTP_200_OK)  
-                else:
-                    return Response({"message": "This task can't be deleted because you're not the requestor"}, status=status.HTTP_403_FORBIDDEN)              
-    except ObjectDoesNotExist:
-        return Response({"message": "You are not allowed to do any modification!"}, status=status.HTTP_403_FORBIDDEN)              
+   
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])

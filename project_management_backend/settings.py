@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'simple_history',
+    'import_export',
+    'rangefilter',
     # New App
     'api',
     'user',
