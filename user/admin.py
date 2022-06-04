@@ -3,7 +3,7 @@ from .models import Division, Account
 
 # Register your models here.
 class DivisionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'leader')
 
 class AccountAdmin(admin.ModelAdmin):
     list_filter = ('division',)

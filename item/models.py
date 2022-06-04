@@ -5,6 +5,7 @@ from simple_history.models import HistoricalRecords
 class Item(models.Model):
     choices = (
         ('Good', 'Good'),
+        ('Second', 'Second'),
         ('Bad', 'Bad'),
     )
     name = models.CharField(max_length=150)
