@@ -31,6 +31,8 @@ def task_view(request, id):
                 if division == task.requestor_division or division == task.requestee_division:
                     requestor = Division.objects.get(name=data['requestor_division'])
                     requestee = Division.objects.get(name=data['requestee_division'])
+                    if task.title == data['title'] and task.description == data['description'] and task.priority == data['priority'] and task.status == data['status'] and task.deadline == parser.parse(data['deadline']) and task.requestor_division == requestor and task.requestee_division == requestee:
+                        return Response({"message": "No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
                     task.title = data['title']
                     task.description = data['description']
                     task.priority = data['priority']

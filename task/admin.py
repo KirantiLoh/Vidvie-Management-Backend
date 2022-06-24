@@ -10,5 +10,6 @@ class TaskAdmin(ExportActionMixin, admin.ModelAdmin):
     list_display = ('title', 'status', 'priority', 'requestor_division', 'requestee_division', 'date_added')
     list_filter = (('priority', AllValuesFieldListFilter), ('status', AllValuesFieldListFilter), ('date_added', DateRangeFilter))
     resource_class = TaskResource
+    search_fields = ['title',]
 
 admin.site.register(Task, TaskAdmin)

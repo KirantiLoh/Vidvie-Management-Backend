@@ -53,6 +53,8 @@ def item_view(request, id):
         if (item.division.leader == account):
             if request.method == 'POST':
                 data = request.data
+                if item.name == data['name'] and item.condition == data['condition'] and item.stock == data['stock'] and item.function == data['function']:
+                    return Response({"message":"No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
                 item.name = data['name']
                 item.condition = data['condition']
                 item.stock = data['stock']

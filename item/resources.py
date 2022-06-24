@@ -7,8 +7,8 @@ class ItemResource(resources.ModelResource):
     division = fields.Field(column_name='division', attribute='division', widget=ForeignKeyWidget(Division, field='name'))
     class Meta:
         model = Item
+        import_id_fields =('name',)
         fields = (
-            'id',
             'name',
             'function',
             'condition',
