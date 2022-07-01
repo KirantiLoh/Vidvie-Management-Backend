@@ -1,0 +1,50 @@
+:root {
+    --primary: #F36D25;
+    --header-bg: #333333;
+    --header-color: #fff;
+    --accent: #fff;
+    --link-fg: #fff;
+    --link-selected-fg: var(--primary);
+    --breadcrumbs-bg: #242424;
+}
+
+* {
+    transition: .3s;
+}
+
+*::-webkit-scrollbar {
+    width: 5px;
+}
+
+a:hover {
+    color: var(--primary);
+}
+
+.button.default, input[type=submit].default, .submit-row input.default {
+    background: var(--primary);
+}
+
+#header {
+    background: var(--header-bg);
+}
+
+.module h2, .module caption, .inline-group h2 {
+    background: var(--header-bg);
+}
+
+#changelist-filter a:hover {
+    color: var(--primary) !important;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --header-bg: var(--primary);
+        --link-fg: #000;
+        --link-selected-fg: var(--primary);
+        --breadcrumbs-bg: #b6b6b6;
+        --breadcrumbs-fg: #fff;   
+    }
+    * {
+        box-shadow: none;
+    }
+}

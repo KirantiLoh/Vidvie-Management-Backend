@@ -61,7 +61,7 @@ def task_view(request, id):
 def tasks_view(request):
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 5
+        paginator.page_size = 10
         tasks = TaskFilter(request.GET, Task.objects.all()).qs
         result = paginator.paginate_queryset(tasks, request)
         serializer = TaskSerializer(result, many = True)
@@ -101,7 +101,7 @@ def tasks_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
     if request.method == 'GET':
         paginator = PageNumberPagination()
-        paginator.page_size = 3
+        paginator.page_size = 7
         try:
             division = Division.objects.get(slug=slug)
             tasks_by_division = TaskFilter(request.GET, division.tasks.all()).qs

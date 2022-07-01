@@ -1,0 +1,30 @@
+{% extends "admin/base.html" %}
+
+{% comment %} {% load i18n  eatn_tags static %} {% endcomment %}
+
+{% load i18n %}
+
+{% load static %}
+
+ 
+
+{% block title %}{{ title }} | {% trans "Vidvie Management Admin" %}{% endblock %}
+
+{% block extrastyle %}
+
+    <link rel="stylesheet" type="text/css" href="{% static "admin/custom.css" %}"/>
+    <link rel="icon" type="image/png" href="{% static "logo-vidvie-management-hitam.png" %}"/>
+
+{% endblock %}
+{% block branding %}
+
+    <h1 id="head">
+        <img src="{% static "logo-vidvie-management-hitam.png" %}" width="50" height="50"/>
+        {% trans "Vidvie Management Admin" %}
+    </h1>
+
+{% endblock %}
+
+ 
+
+{% block nav-global %}{% endblock %}
