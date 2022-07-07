@@ -27,15 +27,19 @@ def items_by_division_view(request, slug):
         if division.leader == account:
             if request.method == 'POST':
                 data = request.data
-                item = Item.objects.create(
-                    name=data['name'],
-                    stock=data['stock'],
-                    condition=data['condition'],
-                    function= data['function'],
-                    division=division
-                )
-                item.save()
-                return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
+                try:
+                    if (int(data['stock']) < 0):
+                        return Response({"message": "Stock cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
+                    item = Item.objects.create(
+                        name=data['name'],
+                        stock= int(data['stock']),
+                        condition=data['condition'],
+                        function= data['function'],
+                        division=division
+                    )
+                    return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
+                except ValueError:
+                    return Response({"message": "Stock must be a number"}, status = status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"message": "You are not allowed to do any modification!"}, status=status.HTTP_403_FORBIDDEN)     
     except ObjectDoesNotExist:
@@ -53,14 +57,20 @@ def item_view(request, id):
         if (item.division.leader == account):
             if request.method == 'POST':
                 data = request.data
-                if item.name == data['name'] and item.condition == data['condition'] and item.stock == data['stock'] and item.function == data['function']:
-                    return Response({"message":"No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
-                item.name = data['name']
-                item.condition = data['condition']
-                item.stock = data['stock']
-                item.function = data['function']
-                item.save()
-                return Response({"message": "Item saved successfully"})
+                try:
+                    stock = int(data['stock'])
+                    if (stock < 0):
+                        return Response({"message": "Stock cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
+                    if item.name == data['name'] and item.condition == data['condition'] and item.stock == stock and item.function == data['function']:
+                        return Response({"message":"No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
+                    item.name = data['name']
+                    item.condition = data['condition']
+                    item.stock = stock,
+                    item.function = data['function']
+                    item.save()
+                    return Response({"message": "Item saved successfully"})
+                except ValueError:
+                    return Response({"message": "Stock must be a number"}, status = status.HTTP_400_BAD_REQUEST)
             if request.method == 'DELETE':
                 item.delete()
                 return Response({"message": "Item deleted successfully"}, status=status.HTTP_200_OK)

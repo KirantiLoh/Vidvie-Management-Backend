@@ -69,19 +69,21 @@ def tasks_view(request):
     if request.method == 'POST':
         data = request.data
         deadline = parser.parse(data['deadline'])
-        requestor_division = Division.objects.get(name = data['requestor_division'])
-        requestee_division = Division.objects.get(name = data['requestee_division'])
-        task = Task.objects.create(
-            title = data['title'],
-            description = data['description'],
-            priority = data['priority'],
-            status = data['status'],
-            deadline = deadline,
-            requestee_division = requestee_division,
-            requestor_division = requestor_division
-        )
-        task.save()
-        return Response({"message": "Request successfully created!"}, status = status.HTTP_201_CREATED)
+        try:
+            requestor_division = Division.objects.get(name = data['requestor_division'])
+            requestee_division = Division.objects.get(name = data['requestee_division'])
+            task = Task.objects.create(
+                title = data['title'],
+                description = data['description'],
+                priority = data['priority'],
+                status = data['status'],
+                deadline = deadline,
+                requestee_division = requestee_division,
+                requestor_division = requestor_division
+            )
+            return Response({"message": "Request successfully created!"}, status = status.HTTP_201_CREATED)
+        except ObjectDoesNotExist:
+            return Response({"message": "Requestee division or requestor division does not exist"}, status = status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
