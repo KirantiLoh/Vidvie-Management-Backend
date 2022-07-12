@@ -8,11 +8,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.pagination import PageNumberPagination
+from django.views.decorators.cache import cache_page
 
 # Create your views here.
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def items_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
     try:

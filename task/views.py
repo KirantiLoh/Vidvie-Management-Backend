@@ -9,10 +9,12 @@ from user.models import Account, Division
 from task.models import Task
 from task.serializers import TaskSerializer
 from task.filters import TaskFilter
+from django.views.decorators.cache import cache_page
 
 # Create your views here.
 @api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def task_view(request, id):
     account = Account.objects.get(user = request.user)
     if request.method == 'GET':
@@ -58,6 +60,7 @@ def task_view(request, id):
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def tasks_view(request):
     if request.method == 'GET':
         paginator = PageNumberPagination()
@@ -87,6 +90,7 @@ def tasks_view(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def requests_view(request):
     if request.method == 'GET':
         paginator = PageNumberPagination()
@@ -99,6 +103,7 @@ def requests_view(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def tasks_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
     if request.method == 'GET':
@@ -116,6 +121,7 @@ def tasks_by_division_view(request, slug):
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 @permission_classes([IsAuthenticated])
+@cache_page(60 * 5)
 def requests_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
     if request.method == 'GET':
