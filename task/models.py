@@ -32,3 +32,7 @@ class Task(models.Model):
     
     class Meta:
         ordering = ('-date_added','-id')
+        indexes = [
+            models.Index(fields=['requestee_division', 'requestor_division']),
+            models.Index(fields=['priority', 'status', 'date_added']),
+        ]

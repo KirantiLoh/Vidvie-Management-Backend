@@ -8,7 +8,7 @@ from rangefilter.filters import DateTimeRangeFilter
 
 # Register your models here.
 class ItemAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'condition', 'stock', 'date_added', 'date_updated')
+    list_display = ('name', 'condition', 'stock', 'borrowed', 'broken', 'date_added', 'date_updated')
     list_filter= [('date_updated', DateTimeRangeFilter), ('condition', AllValuesFieldListFilter)]
     resource_class = ItemResource
     search_fields = ['name',]

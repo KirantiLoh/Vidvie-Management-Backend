@@ -8,13 +8,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.pagination import PageNumberPagination
-from django.views.decorators.cache import cache_page
+from PIL import Image
 
 # Create your views here.
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-@cache_page(60 * 5)
 def items_by_division_view(request, slug):
     account = Account.objects.get(user = request.user)
     try:
@@ -32,13 +31,29 @@ def items_by_division_view(request, slug):
                 try:
                     if (int(data['stock']) < 0):
                         return Response({"message": "Stock cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
-                    item = Item.objects.create(
-                        name=data['name'],
-                        stock= int(data['stock']),
-                        condition=data['condition'],
-                        function= data['function'],
-                        division=division
-                    )
+                    if (data.get('image')):
+                        try:
+                            img = Image.open(data['image'])
+                            img.verify()
+                            Item.objects.create(
+                                image=data['image'],
+                                name=data['name'],
+                                stock= int(data['stock']),
+                                condition=data['condition'],
+                                function= data['function'],
+                                division=division
+                            )
+                            return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
+                        except:
+                            return Response({"message": "Image must be either a jpeg or png"}, status = status.HTTP_400_BAD_REQUEST)
+                    else:
+                        Item.objects.create(
+                                name=data['name'],
+                                stock= int(data['stock']),
+                                condition=data['condition'],
+                                function= data['function'],
+                                division=division
+                            )
                     return Response({'message': 'Item created successfully'}, status=status.HTTP_201_CREATED)
                 except ValueError:
                     return Response({"message": "Stock must be a number"}, status = status.HTTP_400_BAD_REQUEST)
@@ -63,12 +78,14 @@ def item_view(request, id):
                     stock = int(data['stock'])
                     if (stock < 0):
                         return Response({"message": "Stock cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
-                    if item.name == data['name'] and item.condition == data['condition'] and item.stock == stock and item.function == data['function']:
+                    if item.name == data['name'] and item.condition == data['condition'] and item.stock == stock and item.function == data['function'] and not data.get("image"):
                         return Response({"message":"No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
                     item.name = data['name']
                     item.condition = data['condition']
-                    item.stock = stock,
+                    item.stock = stock
                     item.function = data['function']
+                    if data.get('image'):
+                        item.image = data.get('image')
                     item.save()
                     return Response({"message": "Item saved successfully"})
                 except ValueError:

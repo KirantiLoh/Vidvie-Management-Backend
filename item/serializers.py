@@ -6,4 +6,4 @@ class ItemSerializer(serializers.ModelSerializer):
     division = DivisionSerializer(read_only=True, many = False)
     class Meta:
         model = Item
-        fields = ('id', 'name', 'stock', 'function', 'condition', 'division', 'date_added', 'date_updated')
+        fields = ('id', 'image', 'name', 'stock', 'borrowed', 'broken', 'function', 'condition', 'division', 'date_added', 'date_updated')
