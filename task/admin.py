@@ -2,11 +2,11 @@ from django.contrib import admin
 from django.contrib.admin.filters import AllValuesFieldListFilter
 from rangefilter.filters import DateRangeFilter
 from .models import Task
-from import_export.admin import ExportActionMixin
+from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from .resources import TaskResource
 
 # Register your models here.
-class TaskAdmin(ExportActionMixin, admin.ModelAdmin):
+class TaskAdmin(ImportExportModelAdmin, ExportActionMixin, admin.ModelAdmin):
     list_display = ('title', 'status', 'priority', 'requestor_division', 'requestee_division', 'date_added')
     list_select_related = ('requestor_division', 'requestee_division')
     list_filter = (('priority', AllValuesFieldListFilter), ('status', AllValuesFieldListFilter), ('date_added', DateRangeFilter))

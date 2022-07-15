@@ -16,4 +16,5 @@ class ItemResource(resources.ModelResource):
             'division',
             'date_added',
             'date_updated',
+            'image',
         )
