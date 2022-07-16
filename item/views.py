@@ -76,20 +76,24 @@ def item_view(request, id):
                 data = request.data
                 try:
                     stock = int(data['stock'])
-                    if (stock < 0):
-                        return Response({"message": "Stock cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
-                    if item.name == data['name'] and item.condition == data['condition'] and item.stock == stock and item.function == data['function'] and not data.get("image"):
+                    broken = int(data['broken'])
+                    if item.name == data['name'] and item.condition == data['condition'] and item.stock == stock and item.broken == broken and item.function == data['function'] and not data.get("image"):
                         return Response({"message":"No data was changed"}, status=status.HTTP_400_BAD_REQUEST)
+                    if (stock < 0 or broken < 0):
+                        return Response({"message": "Stock and broken cannot be negative"}, status = status.HTTP_400_BAD_REQUEST)
+                    if (stock + (item.broken - broken) < 0):
+                        return Response({"message": "The amount of broken items cannot be bigger than the stock"}, status = status.HTTP_400_BAD_REQUEST)
                     item.name = data['name']
                     item.condition = data['condition']
-                    item.stock = stock
+                    item.stock = stock + (item.broken - broken)
+                    item.broken = broken
                     item.function = data['function']
                     if data.get('image'):
                         item.image = data.get('image')
                     item.save()
                     return Response({"message": "Item saved successfully"})
                 except ValueError:
-                    return Response({"message": "Stock must be a number"}, status = status.HTTP_400_BAD_REQUEST)
+                    return Response({"message": "Stock and broken must be a number"}, status = status.HTTP_400_BAD_REQUEST)
             if request.method == 'DELETE':
                 item.delete()
                 return Response({"message": "Item deleted successfully"}, status=status.HTTP_200_OK)
