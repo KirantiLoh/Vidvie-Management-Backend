@@ -38,16 +38,3 @@ class HandOver(models.Model):
     def __str__(self):
         return f"{self.item.name}"
 
-
-@receiver(pre_save, sender = HandOver)
-def update_item_stock(sender, instance, *args, **kwargs):
-    item = instance.item
-    if (instance.tipe == 'Peminjaman'): 
-        item.stock -= instance.count
-        item.borrowed += instance.count
-    elif(instance.tipe == 'Permintaan'):
-        item.stock -= instance.count
-    else:
-        item.stock += instance.count
-        item.borrowed -= instance.count
-    item.save()

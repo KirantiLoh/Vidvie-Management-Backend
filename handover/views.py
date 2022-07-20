@@ -1,3 +1,4 @@
+from asyncio import exceptions
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
@@ -48,25 +49,41 @@ def handovers_view(request):
                 description = data['description'],
                 count = count,
             )
+            if (data['tipe'] == 'Peminjaman'): 
+                item.stock -= count
+                item.borrowed += count
+            elif(data['tipe'] == 'Permintaan'):
+                item.stock -= count
+            else:
+                item.stock += count
+                item.borrowed -= count
+            item.save()
             return Response({"message": "Form created successfully!"}, status = status.HTTP_201_CREATED)
         except (KeyError, TypeError, ObjectDoesNotExist):
             return Response({"message": "Invalid arguments in the request"}, status = status.HTTP_400_BAD_REQUEST)
 
-"""
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def handover_view(request, id):
-    handover = HandOver.objects.get(id=id)
-    if (request.method == 'GET'):
-        serializer = HandoverSerializer(handover, many = False)
-        return Response(serializer.data, status = status.HTTP_200_OK)
-    account = Account.objects.get(user = request.user)
-    
-    if (request.method == 'POST'):
-        data = request.data
-        return Response({"message":"Handover edited successfully"}, status = status.HTTP_200_OK)
-    if (request.method == 'DELETE'):
-        handover.delete()
-        return Response({"message":"Handover deleted successfully"}, status = status.HTTP_200_OK)
-"""
-    
+    try:
+        handover = HandOver.objects.get(id=id)
+        if (request.method == 'GET'):
+            serializer = HandoverSerializer(handover, many = False)
+            return Response(serializer.data, status = status.HTTP_200_OK)
+        account = Account.objects.get(user = request.user)
+        if (account.division == handover.requestor_division):
+            if (request.method == 'POST'):
+                data = request.data
+                if (data['is_approved'] == 'true'):
+                    handover.is_approved = True
+                else:
+                    handover.is_approved = False
+                handover.save()
+                return Response({"message":"Handover edited successfully"}, status = status.HTTP_200_OK)
+
+            # if (request.method == 'DELETE'):
+            #     handover.delete()
+            #     return Response({"message":"Handover deleted successfully"}, status = status.HTTP_200_OK)
+        return Response({"message":"You're not authorized to edit this handover"}, status=status.HTTP_400_BAD_REQUEST)
+    except (KeyError, ObjectDoesNotExist):
+        return Response({"message": "Invalid arguments in the request"}, status = status.HTTP_400_BAD_REQUEST)
