@@ -3,7 +3,7 @@ from simple_history.models import HistoricalRecords
 from cloudinary.models import CloudinaryField
 from django.dispatch import receiver
 from django.db.models.signals import pre_delete
-from cloudinary import uploader
+import cloudinary
 
 # Create your models here.
 class Item(models.Model):
@@ -22,7 +22,7 @@ class Item(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     image = CloudinaryField('image', null=True, blank=True, folder="items", overwrite=True, invalidate=True, resource_type='image')
-    history = HistoricalRecords()
+    history = HistoricalRecords(cascade_delete_history=True)
 
     class Meta:
         ordering = ('name',)
@@ -34,6 +34,6 @@ class Item(models.Model):
         return self.name
 
 @receiver(pre_delete, sender=Item)
-def delete_image(sender, instance, **kwargs):
-    uploader.destroy(instance.image.public_id, invalidate=True)
+def delete_image(sender, instance, *args, **kwargs):
+    cloudinary.uploader.destroy(public_id = instance.image.public_id, invalidate=True)
 

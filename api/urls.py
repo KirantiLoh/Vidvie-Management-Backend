@@ -16,4 +16,7 @@ urlpatterns = [
     
     # URLs from Item App
     path('', include('item.urls')),
+
+    #URLs from Handover App
+    path('', include('handover.urls')),
 ]
