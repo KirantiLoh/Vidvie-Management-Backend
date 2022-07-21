@@ -62,6 +62,17 @@ def handovers_view(request):
         except (KeyError, TypeError, ObjectDoesNotExist):
             return Response({"message": "Invalid arguments in the request"}, status = status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def handovers_by_division_view(request, division):
+    if request.method == 'GET':
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        handovers = HandOverFilter(request.GET, HandOver.objects.filter(requestor_division__slug=division)).qs
+        result = paginator.paginate_queryset(handovers, request)
+        serializer = HandoverSerializer(result, many = True)
+        return paginator.get_paginated_response(serializer.data)
+    
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def handover_view(request, id):

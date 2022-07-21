@@ -100,7 +100,6 @@ def requests_view(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def tasks_by_division_view(request, slug):
-    account = Account.objects.get(user = request.user)
     if request.method == 'GET':
         paginator = PageNumberPagination()
         paginator.page_size = 7

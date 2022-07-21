@@ -12,6 +12,8 @@ class ItemResource(resources.ModelResource):
             'name',
             'function',
             'condition',
+            'borrowed',
+            'broken',
             'stock',
             'division',
             'date_added',
